@@ -9,7 +9,7 @@
 
 using namespace std;
 
-#define PORT 8080		
+#define PORT 54000		
 #define MAXBUFLEN 4096
 
 class Server {

@@ -4,11 +4,11 @@ Server::Server() {
 
 }
 
-Server::~Server(){
-	
+Server::~Server() {
+
 }
 
-int Server::InitWinSock(){
+int Server::InitWinSock() {
 	WSADATA wsData;                     // winsock startup data
 	WORD ver = MAKEWORD(2, 2);          // su dung phien ban 2.2 (0x0202)
 
@@ -20,7 +20,7 @@ int Server::InitWinSock(){
 	return 0;
 }
 
-int Server::InitSocket(){
+int Server::InitSocket() {
 	this->listening = socket(AF_INET, SOCK_STREAM, 0);
 	if (listening == INVALID_SOCKET) {
 		cerr << "Khong the khoi tao socket! ERROR: " << WSAGetLastError() << endl;
@@ -30,7 +30,7 @@ int Server::InitSocket(){
 	return 0;
 }
 
-int Server::Init(){
+int Server::Init() {
 	if (this->InitWinSock())
 		return 1;
 	if (this->InitSocket())
@@ -38,7 +38,7 @@ int Server::Init(){
 	return 0;
 }
 
-int Server::Bind(){
+int Server::Bind() {
 	//this->hint = {};
 	this->hint.sin_family = AF_INET;
 	this->hint.sin_port = htons(PORT);
@@ -53,7 +53,7 @@ int Server::Bind(){
 	return 0;
 }
 
-int Server::Listen(){
+int Server::Listen() {
 	int ret = listen(listening, SOMAXCONN);
 
 	if (ret == SOCKET_ERROR) {
@@ -64,10 +64,9 @@ int Server::Listen(){
 	return 0;
 }
 
-void Server::AcceptAndSend(){
+void Server::AcceptAndSend() {
 	sockaddr_in client = {};            // ip va port cua client
 	int clientSize = sizeof(client);    // tham so ham accept
-
 	SOCKET clientSocket = accept(listening, (sockaddr*)&client, &clientSize);
 	if (clientSocket == INVALID_SOCKET) {
 		cerr << "Khong the accept client! ERROR: " << WSAGetLastError() << endl;
@@ -79,17 +78,16 @@ void Server::AcceptAndSend(){
 	char service[NI_MAXSERV] = {};		// service (port) the client is connect on
 	//ZeroMemory(host, NI_MAXHOST);		// = memset(host,0,NI_MAXHOST);
 	//ZeroMemory(service, NI_MAXSERV);
-
 	int ret = getnameinfo((sockaddr*)&client, sizeof(client), host, NI_MAXHOST, NULL, 0, 0);
 	if (ret != 0) {
 		cerr << "Khong the lay ten client! ERROR: " << ret << endl;
 		inet_ntop(AF_INET, &(client.sin_addr), host, NI_MAXHOST);      // ko lay dc ten client -> chuyen IPv4 thanh dang text, dat thanh ten cho client
 	}
-
 	cout << "Client: " << host << ", Connected on port: " << ntohs(client.sin_port) << endl;
 
+
 	// header
-	char arrHeaders[] = "HTTP/1.1 200 OK\r\n" 
+	char arrHeaders[] = "HTTP/1.1 200 OK\r\n"
 		"Server: HUYTU-PC Web Server\r\n"
 		"Date: Fri, 21 June 2020\r\n"
 		"Content-Type: text/html\r\n"
@@ -108,10 +106,12 @@ void Server::AcceptAndSend(){
 		"</body>\r\n"
 		"</html>\r\n\n";
 
+
 	char buf[MAXBUFLEN];
 	int bytesReceived;
-	while (true){
-		// Wait for client to send data
+	while (true) {
+		cout << endl << "Wait for client to send data..." << endl;
+
 		ZeroMemory(buf, MAXBUFLEN);
 		bytesReceived = recv(clientSocket, buf, sizeof(buf), 0);
 
@@ -128,13 +128,14 @@ void Server::AcceptAndSend(){
 		cout << string(buf, 0, bytesReceived) << endl;
 
 		// send to client
-		int ret = send(clientSocket, arrHeaders, sizeof(arrHeaders), 0);
-		ret = send(clientSocket, arrData, sizeof(arrData), 0);
-		if (ret == SOCKET_ERROR) {
+		if (send(clientSocket, arrHeaders, sizeof(arrHeaders), 0) != SOCKET_ERROR) {
+			if (send(clientSocket, arrData, sizeof(arrData), 0) != SOCKET_ERROR) {
+			}
+		}
+		else {
 			cerr << "Khong gui duoc toi client! Error: " << WSAGetLastError() << endl;
 			break;
 		}
-		//closesocket(clientSocket);
 	}
 	closesocket(clientSocket);
 
@@ -142,15 +143,15 @@ void Server::AcceptAndSend(){
 
 
 
-void Server::CloseSocket(){
+void Server::CloseSocket() {
 	closesocket(this->listening);
 }
 
-void Server::CloseWinSock(){
+void Server::CloseWinSock() {
 	WSACleanup();
 }
 
-void Server::Close(){
+void Server::Close() {
 	this->CloseSocket();
 	this->CloseWinSock();
 }
