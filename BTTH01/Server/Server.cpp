@@ -8,7 +8,7 @@ Server::~Server() {
 
 }
 
-int Server::InitWinSock() {
+int Server::initWinSock() {
 	WSADATA wsData;                     // winsock startup data
 	WORD ver = MAKEWORD(2, 2);          // su dung phien ban 2.2 (0x0202)
 
@@ -20,7 +20,7 @@ int Server::InitWinSock() {
 	return 0;
 }
 
-int Server::InitSocket() {
+int Server::initSocket() {
 	this->listening = socket(AF_INET, SOCK_STREAM, 0);
 	if (listening == INVALID_SOCKET) {
 		cerr << "Khong the khoi tao socket! ERROR: " << WSAGetLastError() << endl;
@@ -30,10 +30,10 @@ int Server::InitSocket() {
 	return 0;
 }
 
-int Server::Init() {
-	if (this->InitWinSock())
+int Server::init() {
+	if (this->initWinSock())
 		return 1;
-	if (this->InitSocket())
+	if (this->initSocket())
 		return 1;
 	return 0;
 }
@@ -47,30 +47,30 @@ int Server::Bind() {
 	int ret = bind(this->listening, (sockaddr*)&(this->hint), sizeof(this->hint));
 	if (ret == SOCKET_ERROR) {
 		cerr << "Khong the bind socket! ERROR: " << WSAGetLastError() << endl;
-		this->Close();
+		this->close();
 		return 1;
 	}
 	return 0;
 }
 
 int Server::Listen() {
-	int ret = listen(listening, SOMAXCONN);
+	int ret = listen(listening, MAXCLIENT);
 
 	if (ret == SOCKET_ERROR) {
 		cerr << "Khong the lang nghe socket! ERROR: " << WSAGetLastError() << endl;
-		this->Close();
+		this->close();
 		return 1;
 	}
 	return 0;
 }
 
-void Server::AcceptAndSend() {
+void Server::accept_sendClient() {
 	sockaddr_in client = {};            // ip va port cua client
 	int clientSize = sizeof(client);    // tham so ham accept
 	SOCKET clientSocket = accept(listening, (sockaddr*)&client, &clientSize);
 	if (clientSocket == INVALID_SOCKET) {
 		cerr << "Khong the accept client! ERROR: " << WSAGetLastError() << endl;
-		this->Close();
+		this->close();
 		return;
 	}
 
@@ -134,24 +134,23 @@ void Server::AcceptAndSend() {
 		}
 		else {
 			cerr << "Khong gui duoc toi client! Error: " << WSAGetLastError() << endl;
-			break;
+			//break;
 		}
 	}
 	closesocket(clientSocket);
-
 }
 
 
 
-void Server::CloseSocket() {
+void Server::closeSocket() {
 	closesocket(this->listening);
 }
 
-void Server::CloseWinSock() {
+void Server::closeWinSock() {
 	WSACleanup();
 }
 
-void Server::Close() {
-	this->CloseSocket();
-	this->CloseWinSock();
+void Server::close() {
+	this->closeSocket();
+	this->closeWinSock();
 }

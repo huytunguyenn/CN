@@ -11,6 +11,7 @@ using namespace std;
 
 #define PORT 54000		
 #define MAXBUFLEN 4096
+#define MAXCLIENT 10
 
 class Server {
 protected:
@@ -21,18 +22,18 @@ public:
 	Server();
 	~Server();
 
-    int InitWinSock();      // khoi tao winsock                             tra ve: 0: thanh cong, 1: that bai
-    int InitSocket();       // khoi tao socket                              tra ve: 0: thanh cong, 1: that bai
-    int Init();             // khoi tao ca hai                              tra ve: 0: thanh cong, 1: that bai
+    int initWinSock();      // khoi tao winsock                             tra ve: 0: thanh cong, 1: that bai
+    int initSocket();       // khoi tao socket                              tra ve: 0: thanh cong, 1: that bai
+    int init();             // khoi tao ca hai                              tra ve: 0: thanh cong, 1: that bai
 
     int Bind();             // ket buoc socket Server voi port va IP        tra ve: 0: thanh cong, 1: that bai
     int Listen();           // lang nghe tai PORT                           tra ve: 0: thanh cong, 1: that bai      
-    void AcceptAndSend();   // 
+    void accept_sendClient();   // 
   
 
-    void CloseSocket();     // dong socket lang nghe
-    void CloseWinSock();    // shutdown WinSock
-    void Close();           // dong ca hai
+    void closeSocket();     // dong socket lang nghe
+    void closeWinSock();    // shutdown WinSock
+    void close();           // dong ca hai
 };
 
 #endif
