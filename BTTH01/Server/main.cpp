@@ -9,8 +9,12 @@ int main() {
 		return 1;
 	// doi client ket noi 
 	s.Listen();
-	// tao cac thread de lang nghe client
-	spawnThreads(MAXCLIENT,s);
+	// server dang chay
+	bool running = true;
+	while (running) {
+		// tao cac thread de lang nghe client
+		spawnThreads(MAXCLIENT, s);
+	}
 	// dong socket listening cua server
 	s.close();
 	return 0;

@@ -6,7 +6,7 @@ void service(Server s){
 }
 
 
-void spawnThreads(int n, Server s){
+void spawnThreads(int n, Server s) {
     vector<thread> threads(n);
     // tao n thread
     for (int i = 0; i < n; i++) {
@@ -17,3 +17,4 @@ void spawnThreads(int n, Server s){
         th.join();
     }
 }
+
