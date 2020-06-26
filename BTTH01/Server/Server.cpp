@@ -85,6 +85,7 @@ void Server::accept_sendClient() {
 	}
 	cout << "Client: " << host << ", Connected on port: " << ntohs(client.sin_port) << endl;
 
+	// doc html
 
 	// header
 	char arrHeaders[] = "HTTP/1.1 200 OK\r\n"
@@ -127,7 +128,9 @@ void Server::accept_sendClient() {
 
 		cout << string(buf, 0, bytesReceived) << endl;
 
-		// send to client
+		// tach message de phan biet GET hay POST
+
+		// neu la GET -> send index.html
 		if (send(clientSocket, arrHeaders, sizeof(arrHeaders), 0) != SOCKET_ERROR) {
 			if (send(clientSocket, arrData, sizeof(arrData), 0) != SOCKET_ERROR) {
 			}
@@ -136,6 +139,15 @@ void Server::accept_sendClient() {
 			cerr << "Khong gui duoc toi client! Error: " << WSAGetLastError() << endl;
 			//break;
 		}
+
+		// neu la POST 
+		// login dung thi tra ve info.html
+
+		// sai thi tra ve 404.html
+
+
+
+		
 	}
 	closesocket(clientSocket);
 }
