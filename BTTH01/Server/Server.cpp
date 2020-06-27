@@ -65,6 +65,7 @@ int Server::Listen() {
 }
 
 void Server::accept_sendClient() {
+	// accept client ket noi toi
 	sockaddr_in client = {};            // ip va port cua client
 	int clientSize = sizeof(client);    // tham so ham accept
 	SOCKET clientSocket = accept(listening, (sockaddr*)&client, &clientSize);
@@ -74,8 +75,9 @@ void Server::accept_sendClient() {
 		return;
 	}
 
-	char host[NI_MAXHOST] = {};			// client's remote name
-	char service[NI_MAXSERV] = {};		// service (port) the client is connect on
+	// lay thong tin client
+	char host[NI_MAXHOST] = {};			// ten client
+	char service[NI_MAXSERV] = {};		// service (port) client dang ket noi
 	//ZeroMemory(host, NI_MAXHOST);		// = memset(host,0,NI_MAXHOST);
 	//ZeroMemory(service, NI_MAXSERV);
 	int ret = getnameinfo((sockaddr*)&client, sizeof(client), host, NI_MAXHOST, NULL, 0, 0);
@@ -90,16 +92,17 @@ void Server::accept_sendClient() {
 	// header
 	char arrHeaders[] = "HTTP/1.1 200 OK\r\n"
 		"Server: HUYTU-PC Web Server\r\n"
-		"Date: Fri, 21 June 2020\r\n"
+		"Date:\r\n"
 		"Content-Type: text/html\r\n"
 		"Accept-Ranges: bytes\r\n"
 		"Content-Length: 187\r\n"
 		"\r\n";
 
 	// body
-	char arrData[] = "<!doctype html>\r\n"
+	char html[] = "<!doctype html>\r\n"
 		"<html>\r\n"
 		"<head>\r\n"
+		"<link rel=\"icon\" type=\"image/ico\" href=\"favicon.ico\"/>\r\n"
 		"</head>\r\n"
 		"<body>\r\n"
 		"<form action=\"sign_in.aspx\" method=\"post\">\r\n"
@@ -109,9 +112,7 @@ void Server::accept_sendClient() {
 		"<input type=\"submit\" value=\"Login\"/>\r\n"
 		"</form>\r\n"
 		"</body>\r\n"
-		"</html>\r\n";
-
-
+		"</html>\r\n\n";
 
 	char buf[MAXBUFLEN];
 	int bytesReceived;
@@ -137,12 +138,16 @@ void Server::accept_sendClient() {
 
 		// neu la GET -> send index.html
 		if (send(clientSocket, arrHeaders, sizeof(arrHeaders), 0) != SOCKET_ERROR) {
-			if (send(clientSocket, arrData, sizeof(arrData), 0) != SOCKET_ERROR) {
+			if (send(clientSocket, html, sizeof(html), 0) != SOCKET_ERROR) {
+			}
+			else {
+				cerr << "Khong gui duoc toi client! Error: " << WSAGetLastError() << endl;
+				break;
 			}
 		}
 		else {
 			cerr << "Khong gui duoc toi client! Error: " << WSAGetLastError() << endl;
-			//break;
+			break;
 		}
 
 		// neu la POST 
@@ -156,8 +161,6 @@ void Server::accept_sendClient() {
 	}
 	closesocket(clientSocket);
 }
-
-
 
 void Server::closeSocket() {
 	closesocket(this->listening);
