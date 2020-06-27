@@ -97,15 +97,20 @@ void Server::accept_sendClient() {
 		"\r\n";
 
 	// body
-	char arrData[] = "<html>"
-		"<head><title>18120254-18120264</title></head> \r\n"
+	char arrData[] = "<!doctype html>\r\n"
+		"<html>\r\n"
+		"<head>\r\n"
+		"</head>\r\n"
 		"<body>\r\n"
-		"<h1>HELLO WORLD !</h1>\r\n"
-		"<br>\r\n"
-		"4 tien phong 4 bi an ham loz vc<br> \r\n"
-		"18120254@student.hcmus.edu.vn\r\n"
+		"<form action=\"sign_in.aspx\" method=\"post\">\r\n"
+		"<p>Login Form</p>\r\n"
+		"Username: <input type=\"text\" name=\"u_name\" size=\"16\" placeholder=\"Enter Username\"/><br/>\r\n"
+		"Password : <input type=\"text\" name=\"pass\" size=\"16\" maxlength=\"20\" placeholder=\"Enter Password\"/><br/>\r\n"
+		"<input type=\"submit\" value=\"Login\"/>\r\n"
+		"</form>\r\n"
 		"</body>\r\n"
-		"</html>\r\n\n";
+		"</html>\r\n";
+
 
 
 	char buf[MAXBUFLEN];
