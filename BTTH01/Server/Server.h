@@ -6,11 +6,10 @@
 #include <winsock2.h>
 #include <stdio.h>
 #include <string>
-#include <sstream>  //
+#include <sstream>  
 #include <fstream>
 #include <vector>
 #include <istream>
-#include <streambuf> //
 #include <iterator>
 #pragma comment (lib,"ws2_32.lib")      // lien ket thu vien
 
