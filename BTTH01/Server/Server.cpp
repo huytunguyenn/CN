@@ -104,65 +104,71 @@ void Server::accept_sendClient() {
 			break;
 		}
 
+		// in ra thong diep cua client
 		cout << string(buf, 0, bytesReceived) << endl;
 
+		// xu ly yeu cau cua client
+		string output;
+		int size;
+		this->handleClientRequest(buf, output, size);
 
-		// phan tich yeu cau client (e.g: GET /index.html HTTP/1.1)
-		istringstream iss(buf);
-		vector<string> parsed((istream_iterator<string>(iss)), istream_iterator<string>());
-
-
-		// neu client yeu cau file khong ton tai thi in ra 404
-		string content = "<h1>404 Not Found</h1>";		
-		int errorCode = 404;
-
-
-		// html mac dinh la index.html
-		string htmlFile = "/index.html";				
-
-
-		// neu la GET request
-		if (parsed.size() >= 3 && parsed[0] == "GET") {
-			// html client yeu cau
-			htmlFile = parsed[1];
-			// client khong yeu cau file html thi mac dinh la index.html
-			if (htmlFile == "/") {
-				htmlFile = "/index.html";
-			}
-		}
-
-		// doc file html
-		ifstream f(".\\html" + htmlFile);				//ifstream f(".\\html\\index.html");
-		if (f.good()) {						
-			string str((istreambuf_iterator<char>(f)), istreambuf_iterator<char>());
-			content = str;
-			errorCode = 200;
-		}
-		f.close();
-
-
-		// khoi tao message gui cho client
-		ostringstream oss;
-		// header
-		oss << "HTTP/1.1 " << errorCode << " OK\r\n";
-		oss << "Server: HUYTU-PC Web Server\r\n";
-		oss << "Content-Type: text/html\r\n";
-		oss << "Content-Length: " << content.size() << "\r\n";
-		oss << "\r\n";
-		// body (noi dung html)
-		oss << content;
-
-		string output = oss.str();
-		int size = output.size() + 1;
-
-
-		// send noi dung html cho client
+		// send noi dung client yeu cau
 		if (send(clientSocket, output.c_str(), size, 0) == SOCKET_ERROR) {
 			cerr << "Khong gui duoc toi client! Error: " << WSAGetLastError() << endl;
 			break;
 		}
 	}
 	closesocket(clientSocket);
+}
+
+void Server::handleClientRequest(char buf[MAXBUFLEN], string& output, int& size) {
+	// phan tich yeu cau client (e.g: GET /index.html HTTP/1.1)
+	istringstream iss(buf);
+	vector<string> parsed((istream_iterator<string>(iss)), istream_iterator<string>());
+
+
+	// neu client yeu cau file khong ton tai thi in ra 404
+	string content = "<h1>404 Not Found</h1>";
+	int errorCode = 404;
+
+
+	// html mac dinh la index.html
+	string htmlFile = "/index.html";
+
+
+	// neu la GET request
+	if (parsed.size() >= 3 && parsed[0] == "GET") {
+		// html client yeu cau
+		htmlFile = parsed[1];
+		// client khong yeu cau file html thi mac dinh la index.html
+		if (htmlFile == "/") {
+			htmlFile = "/index.html";
+		}
+	}
+
+	// doc file html
+	ifstream f(".\\html" + htmlFile);				//ifstream f(".\\html\\index.html");
+	if (f.good()) {
+		string str((istreambuf_iterator<char>(f)), istreambuf_iterator<char>());
+		content = str;
+		errorCode = 200;
+	}
+	f.close();
+
+
+	// khoi tao message gui cho client
+	ostringstream oss;
+	// header
+	oss << "HTTP/1.1 " << errorCode << " OK\r\n";
+	oss << "Server: HUYTU-PC Web Server\r\n";
+	oss << "Content-Type: text/html\r\n";
+	oss << "Content-Length: " << content.size() << "\r\n";
+	oss << "\r\n";
+	// body (noi dung html)
+	oss << content;
+
+	output = oss.str();
+	size = output.size() + 1;
 }
 
 void Server::closeSocket() {

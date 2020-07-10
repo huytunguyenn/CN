@@ -35,7 +35,8 @@ public:
 
     int Bind();             // ket buoc socket Server voi port va IP        tra ve: 0: thanh cong, 1: that bai
     int Listen();           // lang nghe tai PORT                           tra ve: 0: thanh cong, 1: that bai      
-    void accept_sendClient();   
+    void accept_sendClient();                                               // nhan thong diep tu client, sau do xu ly roi gui lai cho client  
+    void handleClientRequest(char [MAXBUFLEN], string&, int&);              // xu ly thong diep client
 
     void closeSocket();     // dong socket lang nghe
     void closeWinSock();    // shutdown WinSock
