@@ -126,7 +126,7 @@ void Server::handleClientRequest(char buf[MAXBUFLEN], string& output, int& size)
 	istringstream iss(buf);
 	vector<string> parsed((istream_iterator<string>(iss)), istream_iterator<string>());
 
-
+	
 	// neu client yeu cau file khong ton tai thi in ra 404
 	string content = "<h1>404 Not Found</h1>";
 	int errorCode = 404;
@@ -145,6 +145,12 @@ void Server::handleClientRequest(char buf[MAXBUFLEN], string& output, int& size)
 			htmlFile = "/index.html";
 		}
 	}
+	else if (parsed.size() >= 3 && parsed[0] == "POST") {
+		// xu ly check u_name=admin&pass=admin
+
+
+	}
+
 
 	// doc file html
 	ifstream f(".\\html" + htmlFile);				//ifstream f(".\\html\\index.html");
