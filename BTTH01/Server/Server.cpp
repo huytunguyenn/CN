@@ -146,22 +146,14 @@ void Server::handleClientRequest(char buf[MAXBUFLEN], string& output, int& size)
 		}
 	}
 	else if (parsed.size() >= 3 && parsed[0] == "POST") {// neu la POST 
-<<<<<<< HEAD
 		// xu ly kiem tra dang nhap
-=======
 		// xu ly check u_name=admin&pass=admin
->>>>>>> 4f7a5f75f3ed532ff4b9ec4454806b50c4b5187c
 		if (parsed.back() == "user=admin&pass=admin") {
 			htmlFile = "/info.html";
 		}
 		else {
 			htmlFile = "/404.html";
 		}
-<<<<<<< HEAD
-=======
-
->>>>>>> 4f7a5f75f3ed532ff4b9ec4454806b50c4b5187c
-	}
 
 	// doc file html
 	ifstream f(".\\html" + htmlFile);				
