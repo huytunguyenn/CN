@@ -147,7 +147,12 @@ void Server::handleClientRequest(char buf[MAXBUFLEN], string& output, int& size)
 	}
 	else if (parsed.size() >= 3 && parsed[0] == "POST") {// neu la POST 
 		// xu ly check u_name=admin&pass=admin
-
+		if (parsed.back() == "user=admin&pass=admin") {
+			htmlFile = "/info.html";
+		}
+		else {
+			htmlFile = "/404.html";
+		}
 
 	}
 
