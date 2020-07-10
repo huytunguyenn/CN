@@ -39,10 +39,9 @@ int Server::init() {
 }
 
 int Server::Bind() {
-	//this->hint = {};
 	this->hint.sin_family = AF_INET;
 	this->hint.sin_port = htons(PORT);
-	this->hint.sin_addr.S_un.S_addr = INADDR_ANY;		// chon IP cua chinh server, dung inet_pton cung duoc
+	this->hint.sin_addr.S_un.S_addr = INADDR_ANY;		// chon IP cua chinh server (127.0.0.1), dung inet_pton cung duoc
 
 	int ret = bind(this->listening, (sockaddr*)&(this->hint), sizeof(this->hint));
 	if (ret == SOCKET_ERROR) {
@@ -78,8 +77,6 @@ void Server::accept_sendClient() {
 	// lay thong tin client
 	char host[NI_MAXHOST] = {};			// ten client
 	char service[NI_MAXSERV] = {};		// service (port) client dang ket noi
-	//ZeroMemory(host, NI_MAXHOST);		// = memset(host,0,NI_MAXHOST);
-	//ZeroMemory(service, NI_MAXSERV);
 	int ret = getnameinfo((sockaddr*)&client, sizeof(client), host, NI_MAXHOST, NULL, 0, 0);
 	if (ret != 0) {
 		cerr << "Khong the lay ten client! ERROR: " << ret << endl;
@@ -87,33 +84,8 @@ void Server::accept_sendClient() {
 	}
 	cout << "Client: " << host << ", Connected on port: " << ntohs(client.sin_port) << endl;
 
-	// doc html
 
-	// header
-	char arrHeaders[] = "HTTP/1.1 200 OK\r\n"
-		"Server: HUYTU-PC Web Server\r\n"
-		"Date:\r\n"
-		"Content-Type: text/html\r\n"
-		"Accept-Ranges: bytes\r\n"
-		"Content-Length: 187\r\n"
-		"\r\n";
-
-	// body
-	char html[] = "<!doctype html>\r\n"
-		"<html>\r\n"
-		"<head>\r\n"
-		"<link rel=\"icon\" type=\"image/ico\" href=\"favicon.ico\"/>\r\n"
-		"</head>\r\n"
-		"<body>\r\n"
-		"<form action=\"sign_in.aspx\" method=\"post\">\r\n"
-		"<p>Login Form</p>\r\n"
-		"Username: <input type=\"text\" name=\"u_name\" size=\"16\" placeholder=\"Enter Username\"/><br/>\r\n"
-		"Password : <input type=\"text\" name=\"pass\" size=\"16\" maxlength=\"20\" placeholder=\"Enter Password\"/><br/>\r\n"
-		"<input type=\"submit\" value=\"Login\"/>\r\n"
-		"</form>\r\n"
-		"</body>\r\n"
-		"</html>\r\n\n";
-
+	// nhan thong diep client gui den
 	char buf[MAXBUFLEN];
 	int bytesReceived;
 	while (true) {
@@ -134,30 +106,61 @@ void Server::accept_sendClient() {
 
 		cout << string(buf, 0, bytesReceived) << endl;
 
-		// tach message de phan biet GET hay POST
 
-		// neu la GET -> send index.html
-		if (send(clientSocket, arrHeaders, sizeof(arrHeaders), 0) != SOCKET_ERROR) {
-			if (send(clientSocket, html, sizeof(html), 0) != SOCKET_ERROR) {
-			}
-			else {
-				cerr << "Khong gui duoc toi client! Error: " << WSAGetLastError() << endl;
-				break;
+		// phan tich yeu cau client (e.g: GET /index.html HTTP/1.1)
+		istringstream iss(buf);
+		vector<string> parsed((istream_iterator<string>(iss)), istream_iterator<string>());
+
+
+		// neu client yeu cau file khong ton tai thi in ra 404
+		string content = "<h1>404 Not Found</h1>";		
+		int errorCode = 404;
+
+
+		// html mac dinh la index.html
+		string htmlFile = "/index.html";				
+
+
+		// neu la GET request
+		if (parsed.size() >= 3 && parsed[0] == "GET") {
+			// html client yeu cau
+			htmlFile = parsed[1];
+			// client khong yeu cau file html thi mac dinh la index.html
+			if (htmlFile == "/") {
+				htmlFile = "/index.html";
 			}
 		}
-		else {
+
+		// doc file html
+		ifstream f(".\\html" + htmlFile);				//ifstream f(".\\html\\index.html");
+		if (f.good()) {						
+			string str((istreambuf_iterator<char>(f)), istreambuf_iterator<char>());
+			content = str;
+			errorCode = 200;
+		}
+		f.close();
+
+
+		// khoi tao message gui cho client
+		ostringstream oss;
+		// header
+		oss << "HTTP/1.1 " << errorCode << " OK\r\n";
+		oss << "Server: HUYTU-PC Web Server\r\n";
+		oss << "Content-Type: text/html\r\n";
+		oss << "Content-Length: " << content.size() << "\r\n";
+		oss << "\r\n";
+		// body (noi dung html)
+		oss << content;
+
+		string output = oss.str();
+		int size = output.size() + 1;
+
+
+		// send noi dung html cho client
+		if (send(clientSocket, output.c_str(), size, 0) == SOCKET_ERROR) {
 			cerr << "Khong gui duoc toi client! Error: " << WSAGetLastError() << endl;
 			break;
 		}
-
-		// neu la POST 
-		// login dung thi tra ve info.html
-
-		// sai thi tra ve 404.html
-
-
-
-		
 	}
 	closesocket(clientSocket);
 }

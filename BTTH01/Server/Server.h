@@ -5,11 +5,18 @@
 #include <WS2tcpip.h>
 #include <winsock2.h>
 #include <stdio.h>
+#include <string>
+#include <sstream>  //
+#include <fstream>
+#include <vector>
+#include <istream>
+#include <streambuf> //
+#include <iterator>
 #pragma comment (lib,"ws2_32.lib")      // lien ket thu vien
 
 using namespace std;
 
-#define PORT 54000		
+#define PORT 8080		
 #define MAXBUFLEN 4096
 #define MAXCLIENT 10
 
@@ -28,8 +35,7 @@ public:
 
     int Bind();             // ket buoc socket Server voi port va IP        tra ve: 0: thanh cong, 1: that bai
     int Listen();           // lang nghe tai PORT                           tra ve: 0: thanh cong, 1: that bai      
-    void accept_sendClient();   // 
-  
+    void accept_sendClient();   
 
     void closeSocket();     // dong socket lang nghe
     void closeWinSock();    // shutdown WinSock
