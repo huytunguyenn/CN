@@ -1,4 +1,4 @@
-#ifndef _SERVER_H_
+﻿#ifndef _SERVER_H_
 #define _SERVER_H_
 
 #include <iostream>
@@ -11,7 +11,7 @@
 #include <vector>
 #include <istream>
 #include <iterator>
-#pragma comment (lib,"ws2_32.lib")      // lien ket thu vien
+#pragma comment (lib,"ws2_32.lib")      // liên kết thư viện
 
 using namespace std;
 
@@ -21,25 +21,25 @@ using namespace std;
 
 class Server {
 protected:
-    SOCKET listening;   // socket lang nghe
-    sockaddr_in hint;   // ip va port 
+    SOCKET listening;   // socket lắng nghe
+    sockaddr_in hint;   // chứa địa chỉ ip và port 
 
 public:
 	Server();
 	~Server();
 
-    int initWinSock();      // khoi tao winsock                             tra ve: 0: thanh cong, 1: that bai
-    int initSocket();       // khoi tao socket                              tra ve: 0: thanh cong, 1: that bai
-    int init();             // khoi tao ca hai                              tra ve: 0: thanh cong, 1: that bai
+    int initWinSock();      // khởi tạo winsock                             trả về: 0: thành công, 1: thất bại
+    int initSocket();       // khởi tạo socket                              trả về: 0: thành công, 1: thất bại
+    int init();             // khởi tạo cả hai                              trả về: 0: thành công, 1: thất bại
 
-    int Bind();             // ket buoc socket Server voi port va IP        tra ve: 0: thanh cong, 1: that bai
-    int Listen();           // lang nghe tai PORT                           tra ve: 0: thanh cong, 1: that bai      
-    void accept_sendClient();                                               // nhan thong diep tu client, sau do xu ly roi gui lai cho client  
-    void handleClientRequest(char [MAXBUFLEN], string&, int&);              // xu ly thong diep client
+    int Bind();             // kết buộc socket Server với port và đ/c ip    trả về: 0: thành công, 1: thất bại
+    int Listen();           // lắng nghe tại PORT                           trả về: 0: thành công, 1: thất bại      
+    void accept_sendClient();                                            // nhận thông điệp từ client, sau đó xử lý, rồi gửi lại cho client  
+    void handleClientRequest(char [MAXBUFLEN], string&, int&);           // xử lý thông điệp client           truyền vào: nội dung nhận từ client, nội dung sẽ gửi đến client, độ dài tham số thứ 2
 
-    void closeSocket();     // dong socket lang nghe
+    void closeSocket();     // đóng socket lắng nghe
     void closeWinSock();    // shutdown WinSock
-    void close();           // dong ca hai
+    void close();           // đóng cả hai
 };
 
 #endif

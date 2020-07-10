@@ -1,21 +1,21 @@
-#include "Header.h"
+﻿#include "Header.h"
 
 int main() {
 	Server s;
-	// khoi tao socket listening cua server
+	// khởi tạo socket listening của server
 	if (s.init())
 		return 1;
 	if (s.Bind())
 		return 1;
-	// doi client ket noi 
+	// đợi client kết nối tới server
 	s.Listen();
-	// server dang chay
+	// server đang chạy
 	bool running = true;
 	while (running) {
-		// tao cac thread de lang nghe client
+		// tạo các thread phục vụ client
 		spawnThreads(MAXCLIENT, s);
 	}
-	// dong socket listening cua server
+	// đóng socket listening của server
 	s.close();
 	return 0;
 }

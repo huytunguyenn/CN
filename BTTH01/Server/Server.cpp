@@ -10,7 +10,7 @@ Server::~Server() {
 
 int Server::initWinSock() {
 	WSADATA wsData;                     // winsock startup data
-	WORD ver = MAKEWORD(2, 2);          // su dung phien ban 2.2 (0x0202)
+	WORD ver = MAKEWORD(2, 2);          // sử dụng phiên bản 2.2 (0x0202)
 
 	int ret = WSAStartup(ver, &wsData); // ret = return value
 	if (ret != 0) {
@@ -41,7 +41,7 @@ int Server::init() {
 int Server::Bind() {
 	this->hint.sin_family = AF_INET;
 	this->hint.sin_port = htons(PORT);
-	this->hint.sin_addr.S_un.S_addr = INADDR_ANY;		// chon IP cua chinh server (127.0.0.1), dung inet_pton cung duoc
+	this->hint.sin_addr.S_un.S_addr = INADDR_ANY;		// chọn IP của chính server (127.0.0.1), dùng inet_pton cũng được
 
 	int ret = bind(this->listening, (sockaddr*)&(this->hint), sizeof(this->hint));
 	if (ret == SOCKET_ERROR) {
@@ -64,9 +64,9 @@ int Server::Listen() {
 }
 
 void Server::accept_sendClient() {
-	// accept client ket noi toi
-	sockaddr_in client = {};            // ip va port cua client
-	int clientSize = sizeof(client);    // tham so ham accept
+	// accept client kết nối tới
+	sockaddr_in client = {};            // ip và port của client
+	int clientSize = sizeof(client);    // tham số hàm accept
 	SOCKET clientSocket = accept(listening, (sockaddr*)&client, &clientSize);
 	if (clientSocket == INVALID_SOCKET) {
 		cerr << "Khong the accept client! ERROR: " << WSAGetLastError() << endl;
@@ -74,18 +74,18 @@ void Server::accept_sendClient() {
 		return;
 	}
 
-	// lay thong tin client
-	char host[NI_MAXHOST] = {};			// ten client
-	char service[NI_MAXSERV] = {};		// service (port) client dang ket noi
+	// lấy thông tin client
+	char host[NI_MAXHOST] = {};			// tên client
+	char service[NI_MAXSERV] = {};		// service (port) client đang kết nối
 	int ret = getnameinfo((sockaddr*)&client, sizeof(client), host, NI_MAXHOST, NULL, 0, 0);
 	if (ret != 0) {
 		cerr << "Khong the lay ten client! ERROR: " << ret << endl;
-		inet_ntop(AF_INET, &(client.sin_addr), host, NI_MAXHOST);      // ko lay dc ten client -> chuyen IPv4 thanh dang text, dat thanh ten cho client
+		inet_ntop(AF_INET, &(client.sin_addr), host, NI_MAXHOST);      // ko lấy dc tên client -> chuyển IPv4 thành dạng text, đặt thành tên cho client 
 	}
 	cout << "Client: " << host << ", Connected on port: " << ntohs(client.sin_port) << endl;
 
 
-	// nhan thong diep client gui den
+	// nhận thông điệp client gửi đến
 	char buf[MAXBUFLEN];
 	int bytesReceived;
 	while (true) {
@@ -104,15 +104,15 @@ void Server::accept_sendClient() {
 			break;
 		}
 
-		// in ra thong diep cua client
+		// in ra thông điệp client gửi đến
 		cout << string(buf, 0, bytesReceived) << endl;
 
-		// xu ly yeu cau cua client
+		// xử lý yêu cầu của client
 		string output;
 		int size;
 		this->handleClientRequest(buf, output, size);
 
-		// send noi dung client yeu cau
+		// send nội dung client yêu cầu
 		if (send(clientSocket, output.c_str(), size, 0) == SOCKET_ERROR) {
 			cerr << "Khong gui duoc toi client! Error: " << WSAGetLastError() << endl;
 			break;
@@ -122,40 +122,42 @@ void Server::accept_sendClient() {
 }
 
 void Server::handleClientRequest(char buf[MAXBUFLEN], string& output, int& size) {
-	// phan tich yeu cau client (e.g: GET /index.html HTTP/1.1)
+	// phân tích thông điệp client gửi đến											(e.g: GET /index.html HTTP/1.1)
 	istringstream iss(buf);
 	vector<string> parsed((istream_iterator<string>(iss)), istream_iterator<string>());
 
 	
-	// neu client yeu cau file khong ton tai thi in ra 404
+	// nếu client yêu cầu 1 file không tồn tại thì in ra 404						(e.g: GET /abc.xyz HTTP/1.1)
 	string content = "<h1>404 Not Found</h1>";
 	int errorCode = 404;
 
 
-	// html mac dinh la index.html
+	// nếu client không yêu cầu file gì thì mặc định gửi cho client index.html		(e.g: GET / HTTP/1.1)
 	string htmlFile = "/index.html";
 
 
-	// xu ly HTTP Request
-	if (parsed.size() >= 3 && parsed[0] == "GET") {// neu la GET 
-		// html client yeu cau
+	// xử lý HTTP Request
+	if (parsed.size() >= 3 && parsed[0] == "GET") {// nếu là GET method 
+		// tên file client yêu cầu
 		htmlFile = parsed[1];
-		// client khong yeu cau file html thi mac dinh la index.html
+		// trường hợp client không yêu cầu file thì mặc định là index.html
 		if (htmlFile == "/") {
 			htmlFile = "/index.html";
 		}
 	}
-	else if (parsed.size() >= 3 && parsed[0] == "POST") {// neu la POST 
-		// xu ly kiem tra dang nhap
-		// xu ly check u_name=admin&pass=admin
+	else if (parsed.size() >= 3 && parsed[0] == "POST") {// nếu là POST method
+		// kiểm tra đăng nhập
 		if (parsed.back() == "user=admin&pass=admin") {
 			htmlFile = "/info.html";
 		}
-		else {
+		else { // đăng nhập sai
 			htmlFile = "/404.html";
 		}
 
-	// doc file html
+	}
+
+
+	// đọc file html ở local
 	ifstream f(".\\html" + htmlFile);				
 	if (f.good()) {
 		string str((istreambuf_iterator<char>(f)), istreambuf_iterator<char>());
@@ -165,7 +167,7 @@ void Server::handleClientRequest(char buf[MAXBUFLEN], string& output, int& size)
 	f.close();
 
 
-	// khoi tao message gui cho client
+	// khởi tạo thông điệp trả ra cho client
 	ostringstream oss;
 	// header
 	oss << "HTTP/1.1 " << errorCode << " OK\r\n";
@@ -173,7 +175,7 @@ void Server::handleClientRequest(char buf[MAXBUFLEN], string& output, int& size)
 	oss << "Content-Type: text/html\r\n";
 	oss << "Content-Length: " << content.size() << "\r\n";
 	oss << "\r\n";
-	// body (noi dung html)
+	// body (nội dung html)
 	oss << content;
 
 	output = oss.str();

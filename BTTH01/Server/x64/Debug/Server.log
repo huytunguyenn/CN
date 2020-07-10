@@ -1,3 +1,0 @@
-﻿  Server.cpp
-D:\GitHub\CN\BTTH01\Server\Server.cpp(182,26): warning C4267:  '=': conversion from 'size_t' to 'int', possible loss of data
-  Server.vcxproj -> D:\GitHub\CN\BTTH01\x64\Debug\Server.exe
