@@ -136,8 +136,8 @@ void Server::handleClientRequest(char buf[MAXBUFLEN], string& output, int& size)
 	string htmlFile = "/index.html";
 
 
-	// neu la GET request
-	if (parsed.size() >= 3 && parsed[0] == "GET") {
+	// xu ly HTTP Request
+	if (parsed.size() >= 3 && parsed[0] == "GET") {// neu la GET 
 		// html client yeu cau
 		htmlFile = parsed[1];
 		// client khong yeu cau file html thi mac dinh la index.html
@@ -145,7 +145,7 @@ void Server::handleClientRequest(char buf[MAXBUFLEN], string& output, int& size)
 			htmlFile = "/index.html";
 		}
 	}
-	else if (parsed.size() >= 3 && parsed[0] == "POST") {
+	else if (parsed.size() >= 3 && parsed[0] == "POST") {// neu la POST 
 		// xu ly check u_name=admin&pass=admin
 
 
@@ -153,7 +153,7 @@ void Server::handleClientRequest(char buf[MAXBUFLEN], string& output, int& size)
 
 
 	// doc file html
-	ifstream f(".\\html" + htmlFile);				//ifstream f(".\\html\\index.html");
+	ifstream f(".\\html" + htmlFile);				
 	if (f.good()) {
 		string str((istreambuf_iterator<char>(f)), istreambuf_iterator<char>());
 		content = str;
