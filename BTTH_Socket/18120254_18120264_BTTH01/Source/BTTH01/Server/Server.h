@@ -17,7 +17,7 @@ using namespace std;
 
 #define PORT 8080		
 #define MAXBUFLEN 4096
-#define MAXCLIENT 10
+#define MAXCLIENT 20
 
 class Server {
 protected:
