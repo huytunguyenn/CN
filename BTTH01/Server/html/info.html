@@ -1,38 +1,61 @@
-﻿<!doctype dtml>
+﻿<!doctype html>
 <html>
     <head>
         <style>
-           
-            h1{
-                font-size: 50px;
-                text-align: center
-            }
-            body{
-                border-width: 3px;
-                border-color: blue;
+
+            body {
+                font-family: Arial, Helvetica, sans-serif;
             }
 
+            h1 {
+                font-size: 2.5em;
+                text-align: center;
+            }
+
+            .info {
+                border: 3px solid #f1f1f1;
+                padding: 16px;
+            }
+
+            p{
+                width: 250px;
+                float: right
+            }
+
+            .member {
+                width: 100%;
+                padding: 12px 20px;
+                margin: 8px 0;
+                display: inline-block;
+                border: 10px solid #ccc;
+                box-sizing: border-box;
+            }
         </style>
     </head>
     <body>
-        <h1>Thành Viên</h1>
-        <h2>Huy Tú</h2>
-        <img src="https://i.pinimg.com/originals/c6/44/7f/c6447f42f6a3959e71385ad42e478e3a.jpg" alt="Huy_Tu" width="134" height="201" />
-        <p>
-            Họ tên đầy đủ: Nguyễn Huy Tú
-            <br />MSSV: 18120254
-            <br />Quê quán: Tp.HCM
-            <br />Biệt danh: CĐL
-        </p>
-       
+        <h1>Members</h1>
 
-        <h2>Duy Vũ</h2>
-        <img src="https://i.pinimg.com/originals/2c/f0/c4/2cf0c4ffb3fd8f41b2d563bf70bd3a35.jpg" alt="Duy_Vu" width="180" height="180" />
-        <p>
-            Họ tên đầy đủ: Nguyễn Duy Vũ
-            <br />MSSV: 18120264
-            <br />Quê quán: Bình Thuận
-        </p>
-    </body>
+        <div class="info">
+            <div class="member">
+                <h2>Huy Tú</h2>
+                <img src="https://i.pinimg.com/originals/c6/44/7f/c6447f42f6a3959e71385ad42e478e3a.jpg" alt="Huy_Tu" width="150" height="150" />
+                <p>
+                    Full name: Nguyễn Huy Tú
+                    <br />Student ID: 18120254
+                    <br />Facebook: <a href="https://www.facebook.com/threecarbonsminusp">HuyTu Nguyen</a>
+                </p>
+            </div>
+
+            <div class="member">
+                <h2>Duy Vũ</h2>
+                <img src="https://i.pinimg.com/originals/2c/f0/c4/2cf0c4ffb3fd8f41b2d563bf70bd3a35.jpg" alt="Duy_Vu" width="150" height="150" />
+                <p>
+                    Full name: Nguyễn Duy Vũ
+                    <br />Student ID: 18120264
+                    <br />Facebook: <a href="https://www.facebook.com/nguyenduyvu1807">Nguyễn Duy Vũ</a>
+                </p>
+            </div>
+        </div>
+</body>
 </html>
 
