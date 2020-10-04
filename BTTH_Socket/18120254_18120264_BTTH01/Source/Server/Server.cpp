@@ -128,7 +128,7 @@ void Server::handleClientRequest(char buf[MAXBUFLEN], string& output, int& size)
 
 	
 	// nếu client yêu cầu 1 file không tồn tại thì in ra 404						(e.g: GET /abc.xyz HTTP/1.1)
-	string content = "<h1>404 Not Found</h1>";
+	string content = "<h1>404 Not Found</h1>";	// nội dung gửi lại cho client
 	int errorCode = 404;
 
 
